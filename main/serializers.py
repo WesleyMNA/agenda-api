@@ -5,20 +5,27 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(write_only=True)
-
     class Meta:
         model = User
         fields = [
             'id',
             'name',
             'username',
-            'password',
-            'confirm_password',
             'email',
             'birthday',
             'genre',
             'phone_number',
+        ]
+
+
+class CreateUserSerializer(UserSerializer):
+    confirm_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + [
+            'password',
+            'confirm_password'
         ]
         extra_kwargs = {
             'password': {'write_only': True},
