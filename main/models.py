@@ -24,6 +24,7 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
+            username=username,
             name=name,
             genre=genre,
             phone_number=phone_number
