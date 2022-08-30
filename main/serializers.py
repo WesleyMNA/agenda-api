@@ -44,3 +44,34 @@ class CreateUserSerializer(UserSerializer):
 
         attrs['password'] = make_password(password)
         return attrs
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    current_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'current_password',
+            'confirm_password',
+            'new_password',
+        ]
+
+    def validate_current_password(self, value):
+        user = self.context.get('user')
+
+        if not user.check_password(value):
+            raise serializers.ValidationError('Current password is incorrect')
+
+        return value
+
+    def validate(self, attrs):
+        new_password = attrs['new_password']
+        confirm_password = attrs['confirm_password']
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError('Passwords do not match')
+
+        return attrs
