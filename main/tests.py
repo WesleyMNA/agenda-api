@@ -16,9 +16,6 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json = loads(response.content)
         self.assertEqual(1, len(json))
-        user = json[0]
-        self.assertEqual('User', user['name'])
-        self.assertEqual('user', user['username'])
 
     def test_create_user(self):
         data = {
