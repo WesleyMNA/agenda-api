@@ -70,8 +70,12 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         new_password = attrs['new_password']
         confirm_password = attrs['confirm_password']
+        user = self.context.get('user')
 
         if new_password != confirm_password:
             raise serializers.ValidationError('Passwords do not match')
+
+        if user.check_password(new_password):
+            raise serializers.ValidationError('New password cannot be equal to current')
 
         return attrs
