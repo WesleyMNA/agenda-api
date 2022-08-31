@@ -1,4 +1,5 @@
-from rest_framework import viewsets, status
+from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -23,13 +24,22 @@ class AuthViewSet(ObtainAuthToken):
 
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
+
         return Response({
             'token': token.key,
-            'user_id': user.pk
+            'user': {
+                'id': user.pk,
+                'name': user.name,
+                'username': user.username,
+                'email': user.email,
+                'birthday': user.birthday,
+                'genre': user.genre,
+                'phone_number': user.phone_number
+            }
         })
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()

@@ -33,3 +33,17 @@ class UserTests(APITestCase):
         }
         response = self.client.post('/api/users/', data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_should_not_create_user_with_repeated_username_email_or_phone_number(self):
+        data = {
+            'name': 'New User',
+            'username': 'user',
+            'email': 'user@email.com',
+            'birthday': None,
+            'genre': 'F',
+            'phone_number': '12911223344',
+            'password': 'strong-password',
+            'confirm_password': 'strong-password'
+        }
+        response = self.client.post('/api/users/', data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
