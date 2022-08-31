@@ -10,17 +10,27 @@ from .models import User
 class UserTests(APITestCase):
 
     def setUp(self) -> None:
-        self.user = User.objects.create_user('user@email.com', 'user', 'User', 'M', '12911223344', 'password')
+        self.user = User.objects.create_user('user@email.com',
+                                             'user',
+                                             'User',
+                                             'M',
+                                             '12911223344',
+                                             'password')
+        User.objects.create_user('delete.user@email.com',
+                                 'delete.user',
+                                 'Delete User',
+                                 'M',
+                                 '12955667788',
+                                 'password')
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
         self.base_uri = '/api/users/'
-        self.user_uri = uri = '/api/users/1/'
 
     def test_list_users(self):
         response = self.client.get(self.base_uri, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json = loads(response.content)
-        self.assertEqual(1, len(json))
+        self.assertEqual(2, len(json))
 
     def test_create_user(self):
         data = {
@@ -59,9 +69,10 @@ class UserTests(APITestCase):
             'name': 'User 123',
             'genre': 'F'
         }
-        put_response = self.client.put(self.user_uri, data=data, format='json')
+        user_uri = '/api/users/1/'
+        put_response = self.client.put(user_uri, data=data, format='json')
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
-        get_response = self.client.get(self.user_uri)
+        get_response = self.client.get(user_uri)
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         json = loads(get_response.content)
         self.assertEqual(json['birthday'], data['birthday'])
@@ -69,7 +80,8 @@ class UserTests(APITestCase):
         self.assertEqual(json['genre'], data['genre'])
 
     def test_delete_user(self):
-        delete_response = self.client.delete(self.user_uri)
+        delete_uri = '/api/users/2/'
+        delete_response = self.client.delete(delete_uri)
         self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
-        get_response = self.client.get(self.user_uri)
+        get_response = self.client.get(delete_uri)
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
