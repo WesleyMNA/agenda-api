@@ -13,10 +13,11 @@ class UserTests(APITestCase):
         self.user = User.objects.create_user('user@email.com', 'user', 'User', 'M', '12911223344', 'password')
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
-        self.uri = '/api/users/'
+        self.base_uri = '/api/users/'
+        self.user_uri = uri = '/api/users/1/'
 
     def test_list_users(self):
-        response = self.client.get(self.uri, format='json')
+        response = self.client.get(self.base_uri, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json = loads(response.content)
         self.assertEqual(1, len(json))
@@ -32,7 +33,7 @@ class UserTests(APITestCase):
             'password': 'strong-password',
             'confirm_password': 'strong-password'
         }
-        response = self.client.post(self.uri, data=data, format='json')
+        response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_should_not_create_user_with_repeated_username_email_or_phone_number(self):
@@ -46,7 +47,7 @@ class UserTests(APITestCase):
             'password': 'strong-password',
             'confirm_password': 'strong-password'
         }
-        response = self.client.post(self.uri, data=data, format='json')
+        response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_user(self):
@@ -58,12 +59,17 @@ class UserTests(APITestCase):
             'name': 'User 123',
             'genre': 'F'
         }
-        uri = '/api/users/1/'
-        put_response = self.client.put(uri, data=data, format='json')
+        put_response = self.client.put(self.user_uri, data=data, format='json')
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
-        get_response = self.client.get(uri)
-        self.assertEqual(put_response.status_code, status.HTTP_200_OK)
+        get_response = self.client.get(self.user_uri)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         json = loads(get_response.content)
         self.assertEqual(json['birthday'], data['birthday'])
         self.assertEqual(json['name'], data['name'])
         self.assertEqual(json['genre'], data['genre'])
+
+    def test_delete_user(self):
+        delete_response = self.client.delete(self.user_uri)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        get_response = self.client.get(self.user_uri)
+        self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
