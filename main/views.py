@@ -40,8 +40,8 @@ class AuthViewSet(ObtainAuthToken):
 
 
 class UserViewSet(ModelViewSet):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
     def get_serializer_class(self):
