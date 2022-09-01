@@ -60,7 +60,7 @@ class EventTests(BaseTestsSetUp):
         response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_should_not_create_with_initial_date_before_now(self):
+    def test_should_not_create_event_with_initial_date_before_now(self):
         initial_date = timezone.now() - timedelta(hours=1)
         data = {
             'title': 'Gym',
@@ -73,7 +73,7 @@ class EventTests(BaseTestsSetUp):
         response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_should_not_create_without_final_date_and_all_day_false(self):
+    def test_should_not_create_event_without_final_date_and_all_day_false(self):
         initial_date = timezone.now() + timedelta(hours=1)
         data = {
             'title': 'Gym',
@@ -85,6 +85,13 @@ class EventTests(BaseTestsSetUp):
         }
         response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_event(self):
+        delete_uri = '/api/events/1/'
+        delete_response = self.client.delete(delete_uri)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        get_response = self.client.get(delete_uri)
+        self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class UserTests(BaseTestsSetUp):
