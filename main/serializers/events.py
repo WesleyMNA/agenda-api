@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from ..models import Event
@@ -15,4 +16,13 @@ class EventSerializer(serializers.ModelSerializer):
         if not all_day and final_date is None:
             raise serializers.ValidationError('Must set final date if the event does not take all day')
 
+        if final_date is not None and final_date < attrs['initial_date']:
+            raise serializers.ValidationError('Final date must be after initial date')
+
         return attrs
+
+    def validate_initial_date(self, value):
+        if timezone.now() > value:
+            raise serializers.ValidationError('Initial date cannot be a past date')
+
+        return value
