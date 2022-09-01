@@ -4,10 +4,10 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import User
+from .models import User, Event
 
 
-class UserTests(APITestCase):
+class BaseTestsSetUp(APITestCase):
 
     def setUp(self) -> None:
         self.user = User.objects.create_user('user@email.com',
@@ -24,6 +24,31 @@ class UserTests(APITestCase):
                                  'password')
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+
+class EventTests(BaseTestsSetUp):
+
+    def setUp(self) -> None:
+        super().setUp()
+        Event.objects.create(title='Dentist',
+                             description=None,
+                             initial_date='2022-01-01 14:00:00+03:00',
+                             final_date='2022-01-01 15:00:00+03:00',
+                             all_day=False,
+                             user=self.user)
+        self.base_uri = '/api/events/'
+
+    def test_list_events(self):
+        response = self.client.get(self.base_uri, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        json = loads(response.content)
+        self.assertEqual(1, len(json))
+
+
+class UserTests(BaseTestsSetUp):
+
+    def setUp(self) -> None:
+        super().setUp()
         self.base_uri = '/api/users/'
 
     def test_list_users(self):

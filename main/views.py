@@ -45,6 +45,8 @@ class AuthViewSet(ObtainAuthToken):
 
 
 class EventViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
