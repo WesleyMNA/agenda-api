@@ -60,6 +60,32 @@ class EventTests(BaseTestsSetUp):
         response = self.client.post(self.base_uri, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_should_not_create_with_initial_date_before_now(self):
+        initial_date = timezone.now() - timedelta(hours=1)
+        data = {
+            'title': 'Gym',
+            'description': 'Start at the gym',
+            'initial_date': initial_date,
+            'final_date': None,
+            'all_day': True,
+            'user': 1
+        }
+        response = self.client.post(self.base_uri, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_should_not_create_without_final_date_and_all_day_false(self):
+        initial_date = timezone.now() + timedelta(hours=1)
+        data = {
+            'title': 'Gym',
+            'description': 'Start at the gym',
+            'initial_date': initial_date,
+            'final_date': None,
+            'all_day': False,
+            'user': 1
+        }
+        response = self.client.post(self.base_uri, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class UserTests(BaseTestsSetUp):
 
