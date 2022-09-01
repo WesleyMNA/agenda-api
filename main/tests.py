@@ -1,5 +1,7 @@
+from datetime import timedelta
 from json import loads
 
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
@@ -43,6 +45,20 @@ class EventTests(BaseTestsSetUp):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         json = loads(response.content)
         self.assertEqual(1, len(json))
+
+    def test_create_event(self):
+        initial_date = timezone.now() + timedelta(hours=1)
+        final_date = initial_date + timedelta(hours=1)
+        data = {
+            'title': 'Gym',
+            'description': 'Start at the gym',
+            'initial_date': initial_date,
+            'final_date': final_date,
+            'all_day': False,
+            'user': 1
+        }
+        response = self.client.post(self.base_uri, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class UserTests(BaseTestsSetUp):
