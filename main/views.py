@@ -8,8 +8,13 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import User
-from .serializers import UserSerializer, CreateUserSerializer, ChangePasswordSerializer
+from .models import User, Event
+from .serializers import (
+    EventSerializer,
+    UserSerializer,
+    CreateUserSerializer,
+    ChangePasswordSerializer
+)
 
 
 # Create your views here.
@@ -37,6 +42,11 @@ class AuthViewSet(ObtainAuthToken):
                 'phone_number': user.phone_number
             }
         })
+
+
+class EventViewSet(ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
 
 class UserViewSet(ModelViewSet):
