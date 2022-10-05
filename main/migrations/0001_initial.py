@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('username', models.CharField(max_length=100, unique=True)),
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('birthday', models.DateField(blank=True, null=True)),
-                ('genre', models.CharField(choices=[('M', 'Masculine'), ('F', 'Feminine')], max_length=1)),
+                ('gender', models.CharField(choices=[('M', 'Masculine'), ('F', 'Feminine')], max_length=1)),
                 ('phone_number', models.CharField(max_length=20, unique=True)),
                 ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined')),
                 ('last_login', models.DateTimeField(auto_now=True, verbose_name='last login')),

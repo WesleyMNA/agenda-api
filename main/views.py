@@ -38,7 +38,7 @@ class AuthViewSet(ObtainAuthToken):
                 'username': user.username,
                 'email': user.email,
                 'birthday': user.birthday,
-                'genre': user.genre,
+                'gender': user.gender,
                 'phone_number': user.phone_number
             }
         })

@@ -112,7 +112,7 @@ class UserTests(BaseTestsSetUp):
             'username': 'new.user',
             'email': 'new.user@email.com',
             'birthday': None,
-            'genre': 'F',
+            'gender': 'F',
             'phone_number': '12988776655',
             'password': 'strong-password',
             'confirm_password': 'strong-password'
@@ -126,7 +126,7 @@ class UserTests(BaseTestsSetUp):
             'username': 'user',
             'email': 'user@email.com',
             'birthday': None,
-            'genre': 'F',
+            'gender': 'F',
             'phone_number': '12911223344',
             'password': 'strong-password',
             'confirm_password': 'strong-password'
@@ -141,7 +141,7 @@ class UserTests(BaseTestsSetUp):
             'phone_number': '12911223344',
             'birthday': '2022-01-01',
             'name': 'User 123',
-            'genre': 'F'
+            'gender': 'F'
         }
         user_uri = '/api/users/1/'
         put_response = self.client.put(user_uri, data=data, format='json')
@@ -151,7 +151,7 @@ class UserTests(BaseTestsSetUp):
         json = loads(get_response.content)
         self.assertEqual(json['birthday'], data['birthday'])
         self.assertEqual(json['name'], data['name'])
-        self.assertEqual(json['genre'], data['genre'])
+        self.assertEqual(json['gender'], data['gender'])
 
     def test_delete_user(self):
         delete_uri = '/api/users/2/'

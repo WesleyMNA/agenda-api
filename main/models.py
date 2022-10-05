@@ -8,7 +8,7 @@ class UserManager(BaseUserManager):
                     email,
                     username,
                     name,
-                    genre,
+                    gender,
                     phone_number,
                     password=None):
         if not email:
@@ -17,8 +17,8 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have a username')
         if not name:
             raise ValueError('Users must have a name')
-        if not genre:
-            raise ValueError('Users must have a genre')
+        if not gender:
+            raise ValueError('Users must have a gender')
         if not phone_number:
             raise ValueError('Users must have a phone number')
 
@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email),
             username=username,
             name=name,
-            genre=genre,
+            gender=gender,
             phone_number=phone_number
         )
 
@@ -38,7 +38,7 @@ class UserManager(BaseUserManager):
                          email,
                          username,
                          name,
-                         genre,
+                         gender,
                          phone_number,
                          password):
         user = self.create_user(
@@ -46,7 +46,7 @@ class UserManager(BaseUserManager):
             username=username,
             password=password,
             name=name,
-            genre=genre,
+            gender=gender,
             phone_number=phone_number,
         )
         user.is_admin = True
@@ -58,7 +58,7 @@ class UserManager(BaseUserManager):
 
 # Create your models here.
 class User(AbstractBaseUser):
-    class Genre(models.TextChoices):
+    class Gender(models.TextChoices):
         MASCULINE = 'M'
         FEMININE = 'F'
 
@@ -69,9 +69,9 @@ class User(AbstractBaseUser):
         blank=True,
         null=True
     )
-    genre = models.CharField(
+    gender = models.CharField(
         max_length=1,
-        choices=Genre.choices
+        choices=Gender.choices
     )
     phone_number = models.CharField(max_length=20, unique=True)
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
@@ -82,7 +82,7 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'username', 'genre', 'phone_number']
+    REQUIRED_FIELDS = ['name', 'username', 'gender', 'phone_number']
 
     objects = UserManager()
 
